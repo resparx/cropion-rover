@@ -1,0 +1,32 @@
+{
+    "gps_settings": {
+        "port": "/dev/ttyUSB0",
+        "baudrate": 9600,
+        "timeout": 1.0,
+        "update_frequency": 1.0,
+        "minimum_satellites": 4
+    },
+    "position_settings": {
+        "coordinate_system": "WGS84",
+        "latitude_offset": 0.0,
+        "longitude_offset": 0.0,
+        "altitude_offset": 0.0
+    },
+    "filtering": {
+        "enable_kalman_filter": true,
+        "position_variance": 2.5,
+        "velocity_variance": 0.1,
+        "measurement_variance": 3.0
+    },
+    "logging": {
+        "enable_logging": true,
+        "log_frequency": 1.0,
+        "log_path": "/var/log/rover/gps/",
+        "max_log_size_mb": 100
+    },
+    "alerts": {
+        "low_accuracy_threshold": 10.0,
+        "signal_loss_timeout": 5.0,
+        "geofence_radius": 100.0
+    }
+}
