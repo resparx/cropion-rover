@@ -1,0 +1,49 @@
+# Autonomous Agricultural Rover
+
+An autonomous rover system designed for precision agriculture, capable of navigating crop rows and following planned paths using GPS guidance and computer vision.
+
+## Features
+
+- GPS-based navigation with Kalman filtering for improved accuracy
+- Computer vision-based crop row detection and navigation
+- Configurable path planning with coverage patterns
+- Real-time position tracking and monitoring
+
+## System Components
+
+### Navigation
+- Path planning with RRT algorithm
+- Visual navigation using crop row detection
+- Configurable geo-boundaries
+
+### Sensors
+- GPS module with filtering and validation
+- Camera system for visual navigation and row detection
+
+## Installation
+
+1. Clone the repository
+2. Install dependencies:
+   ```
+   pip install opencv-python
+   pip install numpy
+   pip install adafruit-gps
+   pip install pyserial
+   ```
+
+## Configuration
+
+The system uses JSON configuration files located in the `config/` directory:
+- `gps_config.json`: GPS module settings and filtering parameters
+- `path_planner_config.json`: Path planning parameters
+
+## Usage
+
+1. Configure the GPS settings in `config/gps_config.json`
+2. Run the main program:
+   ```
+   python src/main.py
+   ```
+
+## Project Structure
+
