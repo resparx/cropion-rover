@@ -1,7 +1,10 @@
-version: '3'
+version: '3.9'
 services:
+  # Base configuration shared between both profiles
   cropion_rover:
-    build: .
+    build:
+      context: .
+      target: ${BUILD_TARGET:-production}
     environment:
       - ROS_DOMAIN_ID=0
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
@@ -10,5 +13,46 @@ services:
       - "/dev/ttyACM0:/dev/ttyACM0"  # For other serial devices
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix  # For GUI applications
+    restart: unless-stopped
+    profiles: ["prod", "dev"]
+
+  # Development configuration
+  cropion_rover_dev:
+    extends: cropion_rover
+    build:
+      context: .
+      target: development
+    environment:
+      - DEBUG=true
+      - ROS_DOMAIN_ID=0
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix  # For GUI applications
+      - ./src:/app/src:rw  # Mount source code for live development
+      - ./config:/app/config:rw  # Mount configuration files
+      - ~/.ros:/root/.ros:rw  # ROS logs and data
+      - ~/.bashrc:/root/.bashrc:ro  # Personal bash settings
     network_mode: "host"
-    privileged: true  # Required for hardware access 
+    privileged: true  # Required for hardware access during development
+    command: ["bash", "-c", "source /opt/ros/$${ROS_DISTRO}/setup.bash && roslaunch cropion_rover dev.launch"]
+    profiles: ["dev"]
+
+  # Production configuration
+  cropion_rover_prod:
+    extends: cropion_rover
+    environment:
+      - ROS_DOMAIN_ID=0
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix  # For GUI applications
+      - ./config:/app/config:ro  # Mount configuration files (read-only)
+    restart: always
+    network_mode: "host"
+    privileged: false  # Restrict privileges where possible
+    cap_add:
+      - SYS_PTRACE  # For debugging and performance monitoring
+      - NET_ADMIN  # For network configuration
+    security_opt:
+      - no-new-privileges:true
+    command: ["bash", "-c", "source /opt/ros/$${ROS_DISTRO}/setup.bash && roslaunch cropion_rover prod.launch"]
+    profiles: ["prod"]
